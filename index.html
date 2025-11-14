@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberpunk Terminal Scanner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="scanlines"></div>
+
+  <div class="terminal">
+    <div class="terminal-header">Number Info v1.1</div>
+
+    <div class="terminal-body" id="terminalOutput"></div>
+
+    <div class="terminal-input">
+      <span>&gt;</span>
+      <input id="number" type="text" placeholder="ENTER 10 DIGIT NUMBER">
+      <button onclick="runScan()">RUN</button>
+    </div>
+
+    <button id="downloadBtn" onclick="downloadReport()" style="display:none">DOWNLOAD REPORT</button>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
