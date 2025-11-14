@@ -1,30 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Number Info v1.1</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Number Info v1.1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    body {
+        background: #020204;
+        color: #00ff9c;
+        font-family: "Courier New", monospace;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+    
+    .scanlines {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: repeating-linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.15) 0px,
+            rgba(0, 0, 0, 0.15) 2px,
+            rgba(0, 0, 0, 0.25) 3px
+        );
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .terminal {
+        padding: 20px;
+        margin: 30px;
+        border: 2px solid #00ff9c;
+        border-radius: 10px;
+        background: rgba(0, 255, 140, 0.05);
+        box-shadow: 0 0 15px #00ff9c;
+    }
+
+    h1 {
+        color: #00f7ff;
+        text-shadow: 0 0 10px #00eaff;
+    }
+
+    input {
+        background: black;
+        color: #00ff9c;
+        border: 1px solid #00ff9c;
+        padding: 10px;
+        width: 250px;
+    }
+
+    button {
+        background: black;
+        color: #00eaff;
+        border: 1px solid #00eaff;
+        padding: 10px 20px;
+        cursor: pointer;
+        margin-left: 5px;
+    }
+
+    button:hover {
+        background: #00eaff;
+        color: black;
+    }
+
+    #output {
+        margin-top: 20px;
+        white-space: pre-wrap;
+        font-size: 15px;
+    }
+
+    .blink {
+        animation: blinker 0.8s steps(1) infinite;
+    }
+
+    @keyframes blinker {
+        50% { opacity: 0; }
+    }
+</style>
 </head>
+
 <body>
 
-  <div class="scanlines"></div>
+<div class="scanlines"></div>
 
-  <div class="terminal">
-    <div class="terminal-header">NUMBER INFO v1.1</div>
+<div class="terminal">
+    <h1>Number Info v1.1</h1>
 
-    <div class="terminal-body" id="terminalOutput"></div>
+    <p>Enter Mobile Number:</p>
+    <input type="text" id="mobile" placeholder="Example: 9880483249">
+    <button onclick="getInfo()">SCAN</button>
 
-    <div class="terminal-input">
-      <span>&gt;</span>
-      <input id="number" type="text" placeholder="ENTER 10 DIGIT NUMBER">
-      <button onclick="runScan()">RUN</button>
-    </div>
+    <div id="output">Awaiting input<span class="blink">_</span></div>
+</div>
 
-    <button id="downloadBtn" onclick="downloadReport()" style="display:none">DOWNLOAD REPORT</button>
+<script>
+    const API_KEY = "vishalboss_key_fdc25670cee8c9f060f1fc1a0e7faf26224a3624";
 
-  </div>
+    async function getInfo() {
+        const number = document.getElementById("mobile").value.trim();
+        const output = document.getElementById("output");
 
-  <script src="script.js"></script>
+        if (!number) {
+            output.innerText = "Error: Enter a valid number";
+            return;
+        }
+
+        output.innerText = "Connecting to server...\n";
+
+        try {
+            const url = `https://cors.eu.org/https://numberimfo.vishalboss.sbs/api.php?number=${number}&key=${API_KEY}`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (!data.data || data.data.length === 0) {
+                output.innerText = "No details found for this number.";
+                return;
+            }
+
+            const d = data.data[0];
+
+            output.innerText =
+                ">>> SCAN COMPLETE <<<\n\n" +
+                `MOBILE: ${d.mobile}\n` +
+                `NAME: ${d.name}\n` +
+                `FATHER NAME: ${d.fname}\n` +
+                `ADDRESS: ${d.address}\n` +
+                `CIRCLE: ${d.circle}\n` +
+                `ALT NO: ${d.alt || "None"}\n\n` +
+                `DEVELOPER: ${data.developer_message}\n` +
+                `TAG: ${data.developer_tag}\n` +
+                `EXPIRES: ${data.expires_at}`;
+        }
+
+        catch (err) {
+            output.innerText = "ERROR: Cannot fetch data. Check API or internet.";
+        }
+    }
+</script>
+
 </body>
 </html>
