@@ -110,7 +110,7 @@
         output.innerText = "Connecting to server...\n";
 
         try {
-            const url = `https://cors.eu.org/https://numberimfo.vishalboss.sbs/api.php?number=${number}&key=${API_KEY}`;
+            const url = `https://numberimfo.vishalboss.sbs/api.php?number=${number}&key=${API_KEY}`;
             const res = await fetch(url);
             const data = await res.json();
 
